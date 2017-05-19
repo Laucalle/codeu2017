@@ -1,31 +1,30 @@
 #include <vector>
 #include <string>
+#include <cctype> // toupper function
 
 // when both strings are empty, they are considered permutations
 bool is_permutation(const std::string& str1, const std::string& str2){
-	bool out = false;
+	bool is_permutation = false;
 	
 	if(str1.size()==str2.size()){
 		
 		std::vector<bool> check(str1.size(),true); // check this initialization
 		bool found = false;
-		int j = 0;
-		out = true;
+		is_permutation = true;
 
-		for(int i = 0; i<str1.size() && out; i++) {
+		for(int i = 0; i<str1.size() && is_permutation; i++) {
 			found = false;
-			j = 0;
 			
-			while(!found && j<str2.size()) {
-				if(check[j]) {
-					found = str1[i]==str2[j];
-					check[j] = !found;
+			for(int j=0; !found && j<str2.size(); j++) {
+				if(check[j] && toupper(str1[i])==toupper(str2[j])) {
+					found = true;
+					check[j] = false;
 				}
-				j++;
+				
 			}
-			out = found;
+			is_permutation = found;
 		}
 	} 
 
-	return out;
+	return is_permutation;
 }
