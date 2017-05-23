@@ -17,7 +17,8 @@ cell<T>* kToLast(cell<T>* init, int k){
 
 	cell<T>* advanced, *kth;
 	advanced = init;
-	for(int i=0; i<=k && advanced!=NULL; i++){
+	int i;
+	for(i=0; i<=k && advanced!=NULL; i++){
 		advanced = advanced->next;
 	}
 	if(advanced == NULL && i-1 == k) return init;
