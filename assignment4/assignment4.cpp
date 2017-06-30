@@ -3,15 +3,22 @@
 #include <vector>
 
 class IslandCounter{
-	void collapse_island(std::vector< std::vector<bool> > &map, int i, int j){
-		if(!map[i][j]) return;
+	void collapse_island(std::vector< std::vector<bool> > *map, int i, int j){
+		if(!(*map)[i][j]) return;
 
-		map[i][j] = false;
-		collapse_island( map, std::min(i+1, (int) (map.size()-1)), j);
-		collapse_island( map, std::max(i-1, 0), j);
-		collapse_island( map, i, std::min(j+1,(int) (map[i].size()-1)));
-		collapse_island( map, i, std::max(j-1,0));
-		
+		(*map)[i][j] = false;
+		int end_row = std::min(i+1, (int) (map->size()-1));
+		int init_row = std::max(i-1, 0);
+		int end_col = std::min(j+1,(int) ((*map)[i].size()-1));
+		int init_col = std::max(j-1,0);
+
+		for(int row=init_row;row<=end_row;row++){
+			for(int col=init_col;col<=end_col;col++){
+				if((col == j || row == i) && !(col==j && row==i)){
+					collapse_island( map, row, col);
+				}
+			}
+		}
 		return;
 	}
 public:
@@ -21,7 +28,7 @@ public:
 			for (int j = 0; j < map[i].size(); j++) {
 				if( map[i][j]){
 					island_counter++;
-					collapse_island( map, i, j);
+					collapse_island( &map, i, j);
 				}
 			}
 		}
