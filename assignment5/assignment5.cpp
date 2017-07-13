@@ -12,21 +12,31 @@ class UnknownLanguage{
 	std::vector<std::string> dict;
 	void DictionaryToGraph(){
 		graph.clear();
-		for(int i=0; i<dict.size()-1; i++){
-			for(int j=0; j<dict[i].size(); j++){
-
-				if(j < dict[i+1].size() && 
-					dict[i].substr(0, j) == dict[i+1].substr(0, j)){
-
+		bool skip = false;
+		for(int i = 0; i+1<dict.size(); i++){
+			skip = false;
+			for(int j = 0; j<dict[i].size(); j++){
+				if(!skip && j < dict[i+1].size()){
 					if(dict[i][j]!=dict[i+1][j]){
 						graph[dict[i][j]].out_edges.push_back(dict[i+1][j]);
 						graph[dict[i+1][j]].in_edges.push_back(dict[i][j]);
+						skip = true;
 					}
 				} else {
-					break;
+					skip = true;
+					if (graph.find(dict[i][j])==graph.end()){
+						graph.insert(std::pair<char,Node>(dict[i][j],Node()));
+					}
+					
 				}
 			}
 
+		}
+
+		for(int i = 0; i < dict.back().size(); i++){
+			if (graph.find(dict.back()[i])==graph.end()){
+				graph.insert(std::pair<char,Node>(dict.back()[i],Node()));
+			}
 		}
 	}
 public:
@@ -35,10 +45,12 @@ public:
 	}
 	void SetDictionary(const std::vector<std::string> &dictionary){
 		dict = dictionary;
+		DictionaryToGraph();
+		alphabet.clear();
 	}
 	
 	std::string CalculateAlphabet(){
-		alphabet.clear();
+		if(!alphabet.empty()) return alphabet;
 		if(graph.empty()) DictionaryToGraph();
 
 		std::string no_in_edges;
@@ -50,6 +62,7 @@ public:
 		char letter, child;
 		int position;
 		while(!no_in_edges.empty()){
+
 			letter = no_in_edges.back();
 			alphabet.push_back(letter);
 			no_in_edges.pop_back();
@@ -100,4 +113,14 @@ int main(){
 		std::cout << "Test 3: Passed" << std::endl;
 	else
 		std::cout << "Test 3: Failed" << std::endl;
+
+	ul.SetDictionary(std::vector<std::string> ({"abc"}));
+	alp = ul.CalculateAlphabet();
+	if(alp.find("a")!=std::string::npos &&
+	   alp.find("b")!=std::string::npos &&
+	   alp.find("c")!=std::string::npos )
+		std::cout << "Test 4: Passed" << std::endl;
+	else
+		std::cout << "Test 4: Failed" << std::endl;
+
 }
