@@ -13,31 +13,27 @@ class UnknownLanguage{
 	void DictionaryToGraph(){
 		graph.clear();
 		bool skip = false;
-		for(int i = 0; i+1<dict.size(); i++){
-			skip = false;
+
+		// creating nodes
+		for(int i = 0; i < dict.back().size(); i++){
 			for(int j = 0; j<dict[i].size(); j++){
-				if(!skip && j < dict[i+1].size()){
+				graph[dict[i][j]] = Node();
+			}
+		}
+
+		// creating edges
+		for(int i = 0; i+1<dict.size(); i++){
+			for(int j = 0; j<dict[i].size(); j++){
+				if(j < dict[i+1].size()){
 					if(dict[i][j]!=dict[i+1][j]){
 						graph[dict[i][j]].out_edges.push_back(dict[i+1][j]);
 						graph[dict[i+1][j]].in_edges.push_back(dict[i][j]);
-						skip = true;
+						break;
 					}
-				} else {
-					skip = true;
-					if (graph.find(dict[i][j])==graph.end()){
-						graph.insert(std::pair<char,Node>(dict[i][j],Node()));
-					}
-					
-				}
-			}
-
-		}
-
-		for(int i = 0; i < dict.back().size(); i++){
-			if (graph.find(dict.back()[i])==graph.end()){
-				graph.insert(std::pair<char,Node>(dict.back()[i],Node()));
+				} else { break; }
 			}
 		}
+
 	}
 public:
 	UnknownLanguage(const std::vector<std::string> &dictionary): dict(dictionary){
@@ -55,8 +51,8 @@ public:
 
 		std::string no_in_edges;
 		
-		for(std::map<char,Node>::iterator it=graph.begin(); it!=graph.end(); it++){
-			if (it->second.in_edges.empty()) no_in_edges.push_back(it->first);
+		for(const auto &it: graph){
+			if (it.second.in_edges.empty()) no_in_edges.push_back(it.first);
 		}
 
 		char letter, child;
@@ -122,5 +118,12 @@ int main(){
 		std::cout << "Test 4: Passed" << std::endl;
 	else
 		std::cout << "Test 4: Failed" << std::endl;
+
+	ul.SetDictionary(std::vector<std::string> ({}));
+	alp = ul.CalculateAlphabet();
+	if(alp.empty())
+		std::cout << "Test 5: Passed" << std::endl;
+	else
+		std::cout << "Test 5: Failed" << std::endl;
 
 }
