@@ -8,36 +8,38 @@ class ParkingLot
 	int capacity;
 public:
 	ParkingLot(int N):capacity(N){}
-	std::list<std::pair<int,int>> Rearrange(std::vector<int> init_state,
+	std::vector<std::pair<int,int>> Rearrange(std::vector<int> init_state,
 										   std::vector<int> end_state){
 		std::map<int,std::pair<int,int>> cars; // current pos, desired pos
-		std::list<std::pair<int,int> > moves;
+		std::vector<std::pair<int,int> > moves;
 		for (int i=0; i<init_state.size(); i++){
 			cars[init_state[i]].first=i;
 			cars[end_state[i]].second=i;
 		}
 		int empty_spot;
 		int move_car;
-		bool ordered=false;
-		while(!ordered){
+		int ordered=0;
+		std::map<int,std::pair<int,int> >::iterator last_ordered = cars.begin();
+		while(ordered!=init_state.size()){
 			if(cars[0].first==cars[0].second){
-				ordered = true;
-				for(const std::pair<int, std::pair<int,int>> &it: cars){
-					if(it.first!=0 && it.second.first!=it.second.second){
+
+				while(last_ordered!=cars.end()){
+					if(last_ordered->first!=0 && last_ordered->second.first!=last_ordered->second.second){
 						// misplaced car
-						move_car = it.first;
-						ordered=false;
+						move_car = last_ordered->first;
 						break;
-					}
+					} 
+					ordered++;
+					last_ordered++;
 				}
 			} else {
-				ordered = false;
+				
 				move_car = end_state[cars[0].first];
 			}
 
-			if(!ordered){
+			if(ordered!=init_state.size()){
+				
 				moves.push_back(std::pair<int,int>(cars[move_car].first,cars[0].first));
-				std::cout << "from " << cars[move_car].first << " to " << cars[0].first << std::endl;
 				empty_spot = cars[0].first;
 				cars[0].first = cars[move_car].first;
 				cars[move_car].first = empty_spot;
