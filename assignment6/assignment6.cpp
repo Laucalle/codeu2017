@@ -51,5 +51,37 @@ public:
 
 int main(){
 	ParkingLot pl(6);
-	pl.Rearrange({1,5,2,0,3,4},{5,4,3,1,2,0});
+	std::vector<std::pair<int,int> > moves;
+	std::vector<int> test_case_init({1,5,2,0,3,4});
+	std::vector<int> test_case_end({5,4,3,1,2,0});
+
+	moves = pl.Rearrange(test_case_init,test_case_end);
+	int aux;
+	
+	for(const std::pair<int,int> &move: moves){
+		aux = test_case_init[move.first];
+		test_case_init[move.first] = test_case_init[move.second];
+		test_case_init[move.second] = aux;
+	}
+	if(test_case_init==test_case_end){
+		std::cout << "Test 1: PASSED" << std::endl;
+	} else {
+		std::cout << "Test 1: FAILED" << std::endl;
+	}
+
+	test_case_init = {0,1,2,3,4,5};
+	test_case_end = {5,2,1,4,3,0};
+
+	moves = pl.Rearrange(test_case_init,test_case_end);
+		
+	for(const std::pair<int,int> &move: moves){
+		aux = test_case_init[move.first];
+		test_case_init[move.first] = test_case_init[move.second];
+		test_case_init[move.second] = aux;
+	}
+	if(test_case_init==test_case_end){
+		std::cout << "Test 2: PASSED" << std::endl;
+	} else {
+		std::cout << "Test 2: FAILED" << std::endl;
+	}
 }
